@@ -14,17 +14,5 @@ class Buttons extends Component {
     )
   }
 
-  handleClickPlus = event => {
-
-  	}
-
-  handleClickMinus = event => {
-
-    }
-
-  handleClickEqual = event => {
-
-  	}
-
 }
 export default Buttons
