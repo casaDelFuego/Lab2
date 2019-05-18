@@ -5,10 +5,10 @@ class Calculator extends Component {
   constructor (props) {
     super(props);
     this.state = {
-      result: 0,
       currentNumber: 0,
       operator: null,
-      history: []
+      previousResults: [],
+      result: 0
     };
   }
 
@@ -17,11 +17,12 @@ class Calculator extends Component {
     <h1>Mini Calculator</h1>
     <span>{this.state.operator}</span>
     <input type="text" value={this.state.currentNumber} onChange={this.changeHandler.bind(this)}/>
-    <span>{this.state.history}</span>
+    <br/>
+
     <Buttons
     handler={this.handleInput.bind(this)}
     />
-
+    <span>{this.state.result}</span>
     </div>;
   }
 
@@ -32,46 +33,44 @@ class Calculator extends Component {
       this.setState({
         operator: 'CE',
         currentNumber: 0,
-        result: 0
+        result: 0,
+        previousResults: []
       })
       break
 
       case '+':
       case '-':
-      let newHistory = [...this.state.history, op, this.state.currentNumber]
+      let newPreviousResults = [...this.state.previousResults, this.state.currentNumber, op]
         this.setState({
-          history: newHistory,
+          previousResults: newPreviousResults,
           currentNumber: 0
+
+
         })
+
       break
       case '=':
-        this.setState({currentNumber: this.calculate(this.state.history)})
+        this.setState({
+
+          currentNumber: this.calculate(this.state.previousResults),
+          result: this.calculate(this.state.previousResults)
+        })
+
       default:
       break
     }
 
-    console.log(this.state.currentNumber);
+    console.log('the current number', this.state.currentNumber);
   };
 
   changeHandler(event) {
-    console.log(event.target.value)
+    console.log('event target value ', event.target.value)
     let n = parseFloat(event.target.value)
     if (Number.isNaN(n)){
       n = 0;
     }
     this.setState({currentNumber: n})
   }
-
-
-
-  //let currentNumber = "2222"
-  // attach change-handler to your input-element to modify `currentNumber`
-
-  // ON BUTTON press. push currentNumber to history,
-  // and the operator of the pressed.
-
-  // Each press of a button will cause the history to grow
-  // with 2 elements.
 
 
   calculate(buffer) {
@@ -99,7 +98,7 @@ class Calculator extends Component {
 
       }
     })
-    console.log('History: ', buffer.join(' '), result)
+    console.log('previousResults: ', buffer.join(' '), result)
     return result
   };
 
