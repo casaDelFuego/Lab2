@@ -6,56 +6,65 @@ class Calculator extends Component {
     super(props);
     this.state = {
       currentNumber: 0,
+      previousNumber: 0,
       operator: null,
-      previousResults: [],
-      result: 0
+      result: []
     };
   }
 
   render () {
-    return <div>
-    <h1>Mini Calculator</h1>
-    <span>{this.state.operator}</span>
+    let myList = this.state.result.map((i, n) => {
+      return <li key={n}>{i}</li>
+    })
+    return <div className="mini-calc">
+    <h2>Mini Calculator</h2>
+
     <input type="text" value={this.state.currentNumber} onChange={this.changeHandler.bind(this)}/>
-    <br/>
+    <br/><p>{this.state.previousNumber}</p>
 
     <Buttons
     handler={this.handleInput.bind(this)}
     />
-    <span>{this.state.result}</span>
+    <h3>Previous results:</h3>
+    <ul>{myList}</ul>
     </div>;
   }
 
   handleInput (op) {
     console.log('button clicked', op)
+    let y = parseFloat(this.state.currentNumber) || 0
+    let x = this.state.previousNumber
     switch(op){
       case 'CE':
       this.setState({
-        operator: 'CE',
         currentNumber: 0,
-        result: 0,
-        previousResults: []
+        previousNumber: 0,
+        operator: null
       })
       break
 
       case '+':
-      case '-':
-      let newPreviousResults = [...this.state.previousResults, this.state.currentNumber, op]
+      case '-':{
+        let r = this.calculate(x, op, y)
+          this.setState({
+            previousNumber: r,
+            currentNumber: this.state.currentNumber,
+            operator: op,
+            //result: [...this.state.result, r]
+          })
+        break
+      }
+
+
+      case '=':{
+      let r = this.calculate (x, this.state.operator, y)
+
         this.setState({
-          previousResults: newPreviousResults,
-          currentNumber: 0
-
-
+            currentNumber: r,
+            result: [...this.state.result, r],
+            previousNumber: r
         })
-
-      break
-      case '=':
-        this.setState({
-
-          currentNumber: this.calculate(this.state.previousResults),
-          result: this.calculate(this.state.previousResults)
-        })
-
+      }
       default:
       break
     }
@@ -63,45 +72,27 @@ class Calculator extends Component {
     console.log('the current number', this.state.currentNumber);
   };
 
-  changeHandler(event) {
-    console.log('event target value ', event.target.value)
-    let n = parseFloat(event.target.value)
-    if (Number.isNaN(n)){
-      n = 0;
+  calculate(x, op, y) {
+    switch (op) {
+      case '+':
+        return x + y
+      case '-':
+        return x - y
     }
-    this.setState({currentNumber: n})
   }
 
+  changeHandler(event) {
+    console.log('event target value ', event.target.value)
 
-  calculate(buffer) {
-    let result = 0
-    let operator = '='
-    buffer.forEach((i) => {
-      if (typeof i !== 'number') {
-        return operator = i
-      }
-      switch(operator) {
-        case '+':
-        result = result + i
-        break
-        case '-':
-        result = result - i
-        break
-        case '=':
-        result = i
-        break
-        case 'CE':
-        result = 0
-        break
-        default:
-        break
-
-      }
-    })
-    console.log('previousResults: ', buffer.join(' '), result)
-    return result
-  };
+    this.setState({currentNumber: event.target.value.replace(/^0/,'')})
+  }
 
 }
 
 export default Calculator;
+
+
+// let n = parseFloat(event.target.value)
+// if (Number.isNaN(n)){
+//   n = 0;
+// }

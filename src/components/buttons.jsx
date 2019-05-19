@@ -5,7 +5,7 @@ class Buttons extends Component {
 
   render() {
     return (
-      <div>
+      <div className="btns">
       <button onClick={() => this.props.handler('CE')}>CE</button>
       <button onClick={() => this.props.handler('+')}>+</button>
       <button onClick={() => this.props.handler('-')}>-</button>
